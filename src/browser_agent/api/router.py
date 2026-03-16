@@ -88,6 +88,11 @@ async def download_file(provider: str, filename: str) -> FileResponse:
 
 
 def _job_to_response(job) -> JobResponse:
+    download_url = None
+    if job.result and job.result.file_path:
+        filename = Path(job.result.file_path).name
+        download_url = f"/downloads/{job.provider}/{filename}"
+
     return JobResponse(
         id=job.id,
         provider=job.provider,
@@ -96,4 +101,5 @@ def _job_to_response(job) -> JobResponse:
         created_at=job.created_at,
         completed_at=job.completed_at,
         result=job.result.model_dump() if job.result else None,
+        download_url=download_url,
     )

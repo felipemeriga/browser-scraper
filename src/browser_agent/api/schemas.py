@@ -18,6 +18,7 @@ class JobResponse(BaseModel):
     created_at: datetime
     completed_at: datetime | None = None
     result: dict[str, Any] | None = None
+    download_url: str | None = None
 
 
 class EmitInvoiceParams(BaseModel):

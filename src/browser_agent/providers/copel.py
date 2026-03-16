@@ -22,7 +22,8 @@ class CopelProvider(BaseProvider):
         try:
             agent = Agent(
                 task=(
-                    f"Go to the Copel website (https://www.copel.com/). "
+                    "Go to the Copel login page at "
+                    "https://www.copel.com/avaweb/paginaLogin/login.jsf. "
                     f"Log in with username '{settings.copel_username}' "
                     f"and password '{settings.copel_password}'. "
                     f"Navigate to the bills/invoices section. "

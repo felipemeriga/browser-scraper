@@ -19,7 +19,11 @@ class FakeProvider(BaseProvider):
         self, action: str, params: BaseModel | None = None
     ) -> ProviderResult:
         await asyncio.sleep(0.05)
-        return ProviderResult(status="success", extracted_data={"amount": 100.0})
+        return ProviderResult(
+            status="success",
+            file_path="/app/downloads/fake/bill.pdf",
+            extracted_data={"amount": 100.0},
+        )
 
 
 @pytest.fixture(autouse=True)
@@ -92,6 +96,7 @@ async def test_job_completes(client: AsyncClient):
     data = resp.json()
     assert data["status"] == "completed"
     assert data["result"]["status"] == "success"
+    assert data["download_url"] == "/downloads/fake/bill.pdf"
 
 
 async def test_download_unknown_provider(client: AsyncClient):
