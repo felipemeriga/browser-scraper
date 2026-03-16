@@ -1,6 +1,11 @@
+import os
 from contextlib import asynccontextmanager
 
+import certifi
 from fastapi import FastAPI
+
+os.environ.setdefault("SSL_CERT_FILE", certifi.where())
+os.environ.setdefault("REQUESTS_CA_BUNDLE", certifi.where())
 
 from browser_agent.api.router import job_manager, router
 from browser_agent.providers.claro import ClaroProvider
