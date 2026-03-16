@@ -1,3 +1,5 @@
+import re
+
 from pydantic import BaseModel
 
 from browser_agent.api.schemas import FetchBillParams
@@ -59,39 +61,46 @@ class CopelProvider(BaseProvider):
                 await page.locator('button[id*="btnsegundaViaFatura"]').click()
                 await page.wait_for_load_state("networkidle")
 
-                # Step 6: Click "2 via" link
-                segunda_via_link = page.get_by_text("2 via").first
-                await segunda_via_link.click()
-                await page.wait_for_timeout(2000)
-
-                # Step 7: Click the orange download button in dialog
-                download_btn = page.get_by_text("Fazer download da 2ª via")
-                async with page.expect_download(timeout=60000) as download_info:
-                    await download_btn.click()
-
-                # Step 8: Save the downloaded file
-                download = await download_info.value
-                file_name = download.suggested_filename or (
-                    f"copel_{params.reference_month.replace('/', '-')}.pdf"
-                )
-                file_path = str(downloads_path / file_name)
-                await download.save_as(file_path)
-
-                # Step 9: Extract bill info from the page
+                # Step 6: Extract bill info from results
                 amount_text = ""
                 due_date_text = ""
-                try:
-                    valor = page.locator(
-                        "text=/Valor.*R\\$/, text=/R\\$\\s*[\\d,.]/"
-                    ).first
-                    amount_text = await valor.text_content() or ""
-                except Exception:
-                    pass
                 try:
                     vencimento = page.locator("text=/Vencimento/").first
                     due_date_text = await vencimento.text_content() or ""
                 except Exception:
                     pass
+                try:
+                    valor = page.locator("text=/Valor.*R\\$/").first
+                    amount_text = await valor.text_content() or ""
+                except Exception:
+                    pass
+
+                # Step 7: Click "2 via" link
+                segunda_via_link = page.get_by_text("2 via").first
+                await segunda_via_link.click()
+                await page.wait_for_timeout(2000)
+
+                # Step 8: Click the orange download button in dialog
+                download_btn = page.get_by_text("Fazer download da 2ª via")
+                async with page.expect_download(timeout=60000) as download_info:
+                    await download_btn.click()
+
+                # Step 9: Save the downloaded file with due date
+                download = await download_info.value
+                # Clean due date for filename (e.g. "05/04/2026" -> "05-04-2026")
+                due_date_clean = (
+                    re.sub(
+                        r"[^\d]",
+                        "-",
+                        re.search(r"\d{2}/\d{2}/\d{4}", due_date_text).group(),
+                    )
+                    if re.search(r"\d{2}/\d{2}/\d{4}", due_date_text)
+                    else params.reference_month.replace("/", "-")
+                )
+
+                file_name = f"copel_venc_{due_date_clean}.pdf"
+                file_path = str(downloads_path / file_name)
+                await download.save_as(file_path)
 
                 return ProviderResult(
                     status="success",
