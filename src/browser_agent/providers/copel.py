@@ -59,6 +59,7 @@ class CopelProvider(BaseProvider):
                 ),
                 llm=create_llm(),
                 browser=browser,
+                use_vision=settings.use_vision,
             )
             history = await agent.run(max_steps=30)
 

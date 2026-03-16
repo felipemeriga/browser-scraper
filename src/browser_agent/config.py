@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     openai_api_key: str = ""
     llm_model: str = "gpt-4o-mini"
 
+    # Agent
+    use_vision: bool = False
+
     # Concurrency & Timeouts
     max_concurrent_tasks: int = 2
     job_timeout_seconds: int = 300
