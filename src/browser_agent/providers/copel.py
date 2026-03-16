@@ -46,18 +46,21 @@ class CopelProvider(BaseProvider):
                 await page.get_by_text("Entrar").click()
                 await page.wait_for_load_state("networkidle")
 
-                # Step 3: Navigate to Segunda Via Online
-                segunda_via = page.get_by_text("Segunda Via Online")
+                # Step 3: Click "Segunda via online" icon/link
+                segunda_via = page.get_by_text("Segunda via online", exact=False)
                 await segunda_via.click()
                 await page.wait_for_load_state("networkidle")
+                await page.wait_for_timeout(2000)
 
                 # Step 4: Enter reference month
-                month_input = page.locator(
-                    'input[name*="mesReferencia"], '
-                    'input[id*="mesReferencia"], '
-                    'input[placeholder*="MM/AAAA"], '
-                    'input[placeholder*="MM/YYYY"]'
+                month_input = (
+                    page.locator("input")
+                    .filter(has_text="")
+                    .locator('[placeholder*="MM"], [name*="mes"], [id*="mes"]')
                 )
+                if await month_input.count() == 0:
+                    # Fallback: find any visible text input
+                    month_input = page.locator('input[type="text"]').first
                 await month_input.fill(params.reference_month)
 
                 # Step 5: Submit search
