@@ -39,15 +39,11 @@ class CopelProvider(BaseProvider):
                 )
 
                 # Step 2: Login
-                await page.fill(
-                    'input[name*="usuario"], input[id*="usuario"]',
-                    settings.copel_username,
+                await page.get_by_placeholder("CNPJ ou CPF").fill(
+                    settings.copel_username
                 )
-                await page.fill(
-                    'input[name*="senha"], input[id*="senha"]',
-                    settings.copel_password,
-                )
-                await page.click('button[type="submit"], input[type="submit"]')
+                await page.get_by_placeholder("Senha").fill(settings.copel_password)
+                await page.get_by_text("Entrar").click()
                 await page.wait_for_load_state("networkidle")
 
                 # Step 3: Navigate to Segunda Via Online
