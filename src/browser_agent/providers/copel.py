@@ -52,23 +52,11 @@ class CopelProvider(BaseProvider):
                 await page.wait_for_timeout(2000)
 
                 # Step 4: Enter reference month
-                month_input = (
-                    page.locator("input")
-                    .filter(has_text="")
-                    .locator('[placeholder*="MM"], [name*="mes"], [id*="mes"]')
-                )
-                if await month_input.count() == 0:
-                    # Fallback: find any visible text input
-                    month_input = page.locator('input[type="text"]').first
+                month_input = page.locator('input[id*="formSegundaViaFatura"]').first
                 await month_input.fill(params.reference_month)
 
-                # Step 5: Submit search
-                submit_btn = page.locator(
-                    'button:has-text("Pesquisar"), '
-                    'button:has-text("Buscar"), '
-                    'input[type="submit"]'
-                )
-                await submit_btn.click()
+                # Step 5: Click "Listar fatura"
+                await page.locator('button[id*="btnsegundaViaFatura"]').click()
                 await page.wait_for_load_state("networkidle")
 
                 # Step 6: Click "2 via" link
