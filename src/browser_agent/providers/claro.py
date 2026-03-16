@@ -75,8 +75,17 @@ class ClaroProvider(BaseProvider):
                 # Step 5: Fill password (label-based input)
                 await page.get_by_label("Senha").fill(settings.claro_password)
 
-                # Step 6: Click "Entrar" to login
-                await page.get_by_text("Entrar").first.click()
+                # Step 6: Click "Entrar" to login (button starts disabled, wait for it)
+                entrar_btn = page.locator(
+                    "button.mdn-Button--primary:has-text('Entrar')"
+                )
+                await entrar_btn.wait_for(state="attached", timeout=10000)
+                await page.wait_for_function(
+                    "() => !document.querySelector("
+                    '"button.mdn-Button--primary").disabled',
+                    timeout=10000,
+                )
+                await entrar_btn.click()
                 await page.wait_for_load_state("networkidle")
                 await page.wait_for_timeout(3000)
 
