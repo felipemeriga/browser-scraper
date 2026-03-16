@@ -1,0 +1,194 @@
+{
+  "info": {
+    "name": "Browser Agent",
+    "description": "Browser automation agent API for fetching utility bills and emitting invoices",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "Fetch Copel Bill",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks/copel/fetch-bill",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", "copel", "fetch-bill"]
+            }
+          }
+        },
+        {
+          "name": "Fetch Claro Bill",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks/claro/fetch-bill",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", "claro", "fetch-bill"]
+            }
+          }
+        },
+        {
+          "name": "Fetch Sanepar Bill",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks/sanepar/fetch-bill",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", "sanepar", "fetch-bill"]
+            }
+          }
+        },
+        {
+          "name": "Emit Countfly Invoice",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"params\": {\n    \"amount\": 500.00,\n    \"description\": \"Serviço de consultoria\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tasks/countfly/emit-invoice",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", "countfly", "emit-invoice"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Jobs",
+      "item": [
+        {
+          "name": "List All Jobs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/jobs",
+              "host": ["{{base_url}}"],
+              "path": ["jobs"]
+            }
+          }
+        },
+        {
+          "name": "List Jobs by Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/jobs?status=completed",
+              "host": ["{{base_url}}"],
+              "path": ["jobs"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "completed",
+                  "description": "Filter: pending, running, completed, failed"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Job by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/jobs/:job_id",
+              "host": ["{{base_url}}"],
+              "path": ["jobs", ":job_id"],
+              "variable": [
+                {
+                  "key": "job_id",
+                  "value": "",
+                  "description": "The job ID returned from a task creation"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Downloads",
+      "item": [
+        {
+          "name": "Download Bill PDF",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/downloads/:provider/:filename",
+              "host": ["{{base_url}}"],
+              "path": ["downloads", ":provider", ":filename"],
+              "variable": [
+                {
+                  "key": "provider",
+                  "value": "copel",
+                  "description": "Provider name: copel, claro, sanepar, countfly"
+                },
+                {
+                  "key": "filename",
+                  "value": "",
+                  "description": "PDF filename from the job's download_url"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
