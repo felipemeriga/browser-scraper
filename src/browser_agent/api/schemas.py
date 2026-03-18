@@ -26,7 +26,6 @@ class FetchBillParams(BaseModel):
 
 
 class ClaroFetchBillParams(BaseModel):
-    reference_month: str  # MM/YYYY format
     product_type: str = "movel"  # "movel" or "residencial"
 
 
