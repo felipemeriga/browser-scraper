@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 
 from browser_agent.api.schemas import (
+    ClaroFetchBillParams,
     EmitInvoiceParams,
     FetchBillParams,
     HealthResponse,
@@ -47,6 +48,17 @@ async def create_task(
                 detail="copel/fetch-bill requires params: {reference_month} (MM/YYYY)",
             )
         params = FetchBillParams(**body.params)
+    elif provider == "claro" and action == "fetch-bill":
+        if body is None or body.params is None:
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    "claro/fetch-bill requires params: "
+                    "{reference_month} (MM/YYYY), "
+                    "optional product_type (movel|residencial)"
+                ),
+            )
+        params = ClaroFetchBillParams(**body.params)
     elif provider == "countfly" and action == "emit-invoice":
         if body is None or body.params is None:
             raise HTTPException(

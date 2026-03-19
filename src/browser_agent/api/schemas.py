@@ -25,6 +25,10 @@ class FetchBillParams(BaseModel):
     reference_month: str  # MM/YYYY format
 
 
+class ClaroFetchBillParams(BaseModel):
+    product_type: str = "movel"  # "movel" or "residencial"
+
+
 class EmitInvoiceParams(BaseModel):
     amount: float
     description: str
